@@ -24,6 +24,7 @@ internal static class MiscUpdater
     }
 
     private static IDtrBarEntry? _dtrEntry;
+    private static IDtrBarEntry? _dtrEntryMaster;
 
     internal static void UpdateEntry()
     {
@@ -34,7 +35,8 @@ internal static class MiscUpdater
         {
             try
             {
-                _dtrEntry ??= Svc.DtrBar.Get("Rotation Solver Reborn");
+                _dtrEntryMaster ??= Svc.DtrBar.Get("Rotation Solver Reborn");
+                _dtrEntry ??= Svc.DtrBar.Get("Rotation Solver Reborn Mode");
             }
             catch
             {
@@ -45,6 +47,7 @@ internal static class MiscUpdater
             if (_dtrEntry != null && !_dtrEntry.Shown)
             {
                 _dtrEntry.Shown = true;
+                _dtrEntryMaster.Shown = true;
             }
 
             if (_dtrEntry != null)
@@ -74,11 +77,58 @@ internal static class MiscUpdater
                 {
                     _dtrEntry.OnClick = _ => RSCommands.CycleStateManualAuto();
                 }
-            }           
+            }
+
+            if (_dtrEntryMaster != null)
+            {
+
+                if (DataCenter.MasterEnabled)
+                {
+                    _dtrEntryMaster.Text = new SeString(new TextPayload("RSR: On"));
+                    _dtrEntryMaster.OnClick = _ =>
+                    {
+                        DataCenter.MasterEnabled = false;
+                        DataCenter.ResetAllRecords();
+                        //RotationSolver.Commands.RSCommands.DoStateCommandType(StateCommandType.Off);
+                        RSCommands.CancelState();
+                    };
+                }
+                else 
+                {
+                    _dtrEntryMaster.Text = new SeString(new TextPayload("RSR: Off"));
+                    _dtrEntryMaster.OnClick = _ =>
+                    {
+                        DataCenter.MasterEnabled = true;
+                        //RotationSolver.Commands.RSCommands.DoStateCommandType(StateCommandType.Auto);
+                        if (Service.Config.DTRType == DTRType.DTRNormal)
+                        {
+                            RSCommands.CycleStateWithOneTargetTypes();
+                        }
+                        else if (Service.Config.DTRType == DTRType.DTRAllAuto)
+                        {
+                            RSCommands.CycleStateWithAllTargetTypes();
+                        }
+                        else if (Service.Config.DTRType == DTRType.DTRAuto)
+                        {
+                            RSCommands.CycleStateAuto();
+                        }
+                        else if (Service.Config.DTRType == DTRType.DTRManual)
+                        {
+                            RSCommands.CycleStateManual();
+                        }
+                        else if (Service.Config.DTRType == DTRType.DTRManualAuto)
+                        {
+                            RSCommands.CycleStateManualAuto();
+                        }
+                    };
+                }
+
+            }
         }
         else if (_dtrEntry != null && _dtrEntry.Shown)
         {
             _dtrEntry.Shown = false;
+            _dtrEntryMaster.Shown = false;
         }
     }
 
@@ -295,6 +345,10 @@ internal static class MiscUpdater
         if (_dtrEntry?.Title != null)
         {
             Svc.DtrBar.Remove(_dtrEntry.Title);
+        }
+        if (_dtrEntryMaster?.Title != null)
+        {
+            Svc.DtrBar.Remove(_dtrEntryMaster.Title);
         }
     }
 }

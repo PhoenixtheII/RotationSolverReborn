@@ -278,7 +278,8 @@ namespace RotationSolver.Commands
 
                 //PluginLog.Debug($"AllTargetsCount = {DataCenter.AllTargets.Count} && AllHostileTargets: {DataCenter.AllHostileTargets.Count} && PartyCount: {DataCenter.PartyMembers.Count} && DataCenter.State = {DataCenter.State} && StartOnPartyIsInCombat = {Service.Config.StartOnPartyIsInCombat} && StartOnAllianceIsInCombat = {Service.Config.StartOnAllianceIsInCombat} && StartOnFieldOpInCombat = {Service.Config.StartOnFieldOpInCombat}");
                 
-                if (Service.Config.StartOnPartyIsInCombat && !DataCenter.State && DataCenter.PartyMembers.Count > 1)
+                
+                if (Service.Config.StartOnPartyIsInCombat && !DataCenter.State  && DataCenter.MasterEnabled && DataCenter.PartyMembers.Count > 1)
                 {
                     foreach (var p in DataCenter.PartyMembers)
                     {
@@ -300,7 +301,7 @@ namespace RotationSolver.Commands
                     
                 }
 
-                if ((Service.Config.StartOnAllianceIsInCombat && !DataCenter.State && DataCenter.AllianceMembers.Count > 1)  && !(DataCenter.IsInBozjanFieldOp || DataCenter.IsInBozjanFieldOpCE || DataCenter.IsInOccultCrescentOp || DataCenter.IsInOccultCrescentOpCE))
+                if ((Service.Config.StartOnAllianceIsInCombat && !DataCenter.State   && DataCenter.MasterEnabled && DataCenter.AllianceMembers.Count > 1)  && !(DataCenter.IsInBozjanFieldOp || DataCenter.IsInBozjanFieldOpCE || DataCenter.IsInOccultCrescentOp || DataCenter.IsInOccultCrescentOpCE))
                 {
                     foreach (var a in DataCenter.AllianceMembers)
                     {
@@ -321,7 +322,7 @@ namespace RotationSolver.Commands
                     }
                 }
 
-                if (Service.Config.StartOnFieldOpInCombat && !DataCenter.State && (DataCenter.IsInBozjanFieldOp || DataCenter.IsInBozjanFieldOpCE || DataCenter.IsInOccultCrescentOp || DataCenter.IsInOccultCrescentOpCE))
+                if ((Service.Config.StartOnFieldOpInCombat && !DataCenter.State && DataCenter.MasterEnabled) && (DataCenter.IsInBozjanFieldOp || DataCenter.IsInBozjanFieldOpCE || DataCenter.IsInOccultCrescentOp || DataCenter.IsInOccultCrescentOpCE))
                 {
                     foreach (var t in TargetHelper.GetTargetsByRange(30f))
                     {
@@ -349,7 +350,7 @@ namespace RotationSolver.Commands
                     }
                 }
                 IBattleChara? target = null;
-                if (Service.Config.StartOnAttackedBySomeone && !DataCenter.State)
+                if (Service.Config.StartOnAttackedBySomeone && !DataCenter.State && DataCenter.MasterEnabled)
                 {
                     foreach (var t in DataCenter.AllHostileTargets)
                     {

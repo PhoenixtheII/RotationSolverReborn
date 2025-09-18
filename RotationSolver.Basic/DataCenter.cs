@@ -20,6 +20,7 @@ namespace RotationSolver.Basic;
 
 internal static class DataCenter
 {
+    public static bool MasterEnabled = false;
     public static List<IBattleChara> PartyMembers { get; set; } = [];
 
     public static List<IBattleChara> AllianceMembers { get; set; } = [];
@@ -43,7 +44,7 @@ internal static class DataCenter
 
     public static bool IsActivated()
     {
-        return Player.AvailableThreadSafe && (State || IsManual || Service.Config.TeachingMode);
+        return Player.AvailableThreadSafe && (MasterEnabled && (State || IsManual || Service.Config.TeachingMode));
     }
 
     public static bool PlayerAvailable()
